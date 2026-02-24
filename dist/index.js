@@ -27556,7 +27556,7 @@ module.exports = parseParams
 /************************************************************************/
 var __webpack_exports__ = {};
 const core = __nccwpck_require__(7484);
-const defaultMaxLength = 40
+const defaultMaxLength = 63
 try {
     const input = core.getInput("branch") ? core.getInput("branch") : process.env.GITHUB_HEAD_REF;
     const maxBranchLength = core.getInput("max_length") ? core.getInput("max_length") : defaultMaxLength;

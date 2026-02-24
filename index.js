@@ -1,5 +1,5 @@
 const core = require("@actions/core");
-const defaultMaxLength = 40
+const defaultMaxLength = 63
 try {
     const input = core.getInput("branch") ? core.getInput("branch") : process.env.GITHUB_HEAD_REF;
     const maxBranchLength = core.getInput("max_length") ? core.getInput("max_length") : defaultMaxLength;
