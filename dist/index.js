@@ -27568,7 +27568,7 @@ try {
         output = output.substring(0, maxBranchLength);
     }
 
-    if (output.charAt(output.length - 1) === '-') {
+    while (output.length > 0 && output.charAt(output.length - 1) === '-') {
         output = output.substring(0, output.length - 1);
     }
 
