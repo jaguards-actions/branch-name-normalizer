@@ -1,6 +1,6 @@
 {
   "name": "branch-name-normalizer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Simple action that normalizez the current branch name into a string with only lowercase alphanumerical values, separated by hiphens. Example: For the branch name: Alex/A-Simple-pr. Output: `alex-a-simple-pr`",
   "main": "index.js",
   "scripts": {
@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@actions/core": "^1.2.7"
+    "@actions/core": "3.0.0"
   }
 }
