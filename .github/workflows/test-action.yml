@@ -53,20 +53,20 @@ jobs:
           fi
           echo "✅ Test passed"
 
-      # Test 3: Max length truncation (default 40)
+      # Test 3: Max length truncation (default 63)
       - name: "Test: max length truncation"
         id: long
         uses: ./
         with:
-          branch: "feature/this-is-a-very-long-branch-name-that-exceeds-the-limit"
+          branch: "feature/this-is-a-very-long-branch-name-that-exceeds-the-limit-and-should-be-truncated-accordingly"
 
       - name: "Verify: max length truncation"
         run: |
           actual="${{ steps.long.outputs.normalized }}"
           echo "Actual:   $actual"
           echo "Length:   ${#actual}"
-          if [ "${#actual}" -gt 40 ]; then
-            echo "::error::Test 'max length truncation' failed! Length ${#actual} exceeds 40"
+          if [ "${#actual}" -gt 63 ]; then
+            echo "::error::Test 'max length truncation' failed! Length ${#actual} exceeds 63"
             exit 1
           fi
           echo "✅ Test passed"
