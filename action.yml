@@ -11,8 +11,8 @@ outputs:
   normalized:
     description: "Normalized branch name"
 runs:
-  using: "node12"
-  main: "index.js"
+  using: "node20"
+  main: "dist/index.js"
 branding:
   icon: 'terminal'
   color: 'green'
