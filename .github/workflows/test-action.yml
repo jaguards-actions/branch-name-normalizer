@@ -1,0 +1,147 @@
+name: Test Branch Name Normalizer
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Test 1: Basic normalization (uppercase + special chars)
+      - name: "Test: basic normalization"
+        id: basic
+        uses: ./
+        with:
+          branch: "Feature/My-New_Feature!"
+
+      - name: "Verify: basic normalization"
+        run: |
+          expected="feature-my-new-feature-"
+          # trim trailing hyphen handled by action
+          expected="feature-my-new-feature"
+          actual="${{ steps.basic.outputs.normalized }}"
+          echo "Expected: $expected"
+          echo "Actual:   $actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Test 'basic normalization' failed!"
+            exit 1
+          fi
+          echo "✅ Test passed"
+
+      # Test 2: Already clean input
+      - name: "Test: already normalized"
+        id: clean
+        uses: ./
+        with:
+          branch: "my-clean-branch"
+
+      - name: "Verify: already normalized"
+        run: |
+          expected="my-clean-branch"
+          actual="${{ steps.clean.outputs.normalized }}"
+          echo "Expected: $expected"
+          echo "Actual:   $actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Test 'already normalized' failed!"
+            exit 1
+          fi
+          echo "✅ Test passed"
+
+      # Test 3: Max length truncation (default 40)
+      - name: "Test: max length truncation"
+        id: long
+        uses: ./
+        with:
+          branch: "feature/this-is-a-very-long-branch-name-that-exceeds-the-limit"
+
+      - name: "Verify: max length truncation"
+        run: |
+          actual="${{ steps.long.outputs.normalized }}"
+          echo "Actual:   $actual"
+          echo "Length:   ${#actual}"
+          if [ "${#actual}" -gt 40 ]; then
+            echo "::error::Test 'max length truncation' failed! Length ${#actual} exceeds 40"
+            exit 1
+          fi
+          echo "✅ Test passed"
+
+      # Test 4: Custom max_length
+      - name: "Test: custom max length"
+        id: custom-length
+        uses: ./
+        with:
+          branch: "feature/a-branch-name"
+          max_length: "10"
+
+      - name: "Verify: custom max length"
+        run: |
+          actual="${{ steps.custom-length.outputs.normalized }}"
+          echo "Actual:   $actual"
+          echo "Length:   ${#actual}"
+          if [ "${#actual}" -gt 10 ]; then
+            echo "::error::Test 'custom max length' failed! Length ${#actual} exceeds 10"
+            exit 1
+          fi
+          echo "✅ Test passed"
+
+      # Test 5: Trailing hyphen removal
+      - name: "Test: trailing hyphen removal"
+        id: trailing
+        uses: ./
+        with:
+          branch: "my-branch--"
+
+      - name: "Verify: trailing hyphen removal"
+        run: |
+          actual="${{ steps.trailing.outputs.normalized }}"
+          echo "Actual:   $actual"
+          if [[ "$actual" == *- ]]; then
+            echo "::error::Test 'trailing hyphen removal' failed! Output ends with a hyphen"
+            exit 1
+          fi
+          echo "✅ Test passed"
+
+      # Test 6: Special characters replaced with hyphens
+      - name: "Test: special characters"
+        id: special
+        uses: ./
+        with:
+          branch: "feat@branch#name$here"
+
+      - name: "Verify: special characters"
+        run: |
+          expected="feat-branch-name-here"
+          actual="${{ steps.special.outputs.normalized }}"
+          echo "Expected: $expected"
+          echo "Actual:   $actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Test 'special characters' failed!"
+            exit 1
+          fi
+          echo "✅ Test passed"
+
+      # Test 7: Whitespace trimming and replacement
+      - name: "Test: whitespace handling"
+        id: whitespace
+        uses: ./
+        with:
+          branch: "  my branch name  "
+
+      - name: "Verify: whitespace handling"
+        run: |
+          expected="my-branch-name"
+          actual="${{ steps.whitespace.outputs.normalized }}"
+          echo "Expected: $expected"
+          echo "Actual:   $actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "::error::Test 'whitespace handling' failed!"
+            exit 1
+          fi
+          echo "✅ Test passed"
+
